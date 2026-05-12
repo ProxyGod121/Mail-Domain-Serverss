@@ -8,6 +8,7 @@ import {
   useDeleteEmail,
   getListEmailsQueryKey,
   getGetEmailStatsQueryKey,
+  getGetMeQueryKey,
   type Email,
   type ListEmailsFolder
 } from "@workspace/api-client-react";
@@ -43,7 +44,7 @@ import {
 export default function InboxPage() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
-  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false } });
+  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
   
   const searchParams = new URLSearchParams(window.location.search);
   const folder = (searchParams.get("folder") as ListEmailsFolder) || "inbox";
@@ -60,7 +61,7 @@ export default function InboxPage() {
 
   const { data: listResponse, isLoading: isLoadingEmails } = useListEmails(
     { folder, search: debouncedSearch || undefined, limit: 50 },
-    { query: { enabled: !!user } }
+    { query: { enabled: !!user, queryKey: getListEmailsQueryKey({ folder, search: debouncedSearch || undefined, limit: 50 }) } }
   );
 
   const updateEmail = useUpdateEmail();

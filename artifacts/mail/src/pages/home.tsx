@@ -7,7 +7,8 @@ import {
   useRegister, 
   useCheckUsername, 
   useGetMe,
-  getGetMeQueryKey
+  getGetMeQueryKey,
+  getCheckUsernameQueryKey
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -40,6 +41,7 @@ export default function Home() {
   const { data: user, isLoading: isCheckingAuth } = useGetMe({
     query: {
       retry: false,
+      queryKey: getGetMeQueryKey(),
     }
   });
 
@@ -67,6 +69,7 @@ export default function Home() {
       query: {
         enabled: debouncedUsername.length >= 3,
         retry: false,
+        queryKey: getCheckUsernameQueryKey({ username: debouncedUsername }),
       }
     }
   );
@@ -89,7 +92,7 @@ export default function Home() {
           toast({
             variant: "destructive",
             title: "Error creating account",
-            description: error.error || "Please try again.",
+            description: (error as any)?.error || "Please try again.",
           });
         },
       }

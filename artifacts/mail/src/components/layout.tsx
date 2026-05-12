@@ -9,7 +9,7 @@ import {
   LogOut,
   PenSquare
 } from "lucide-react";
-import { useGetMe, useGetEmailStats, useLogout, getGetMeQueryKey } from "@workspace/api-client-react";
+import { useGetMe, useGetEmailStats, useLogout, getGetMeQueryKey, getGetEmailStatsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -30,8 +30,8 @@ interface LayoutProps {
 export function AppLayout({ children }: LayoutProps) {
   const [location, setLocation] = useLocation();
   const queryClient = useQueryClient();
-  const { data: user } = useGetMe({ query: { retry: false } });
-  const { data: stats } = useGetEmailStats({ query: { enabled: !!user } });
+  const { data: user } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
+  const { data: stats } = useGetEmailStats({ query: { enabled: !!user, queryKey: getGetEmailStatsQueryKey() } });
   const logout = useLogout();
 
   const handleLogout = () => {

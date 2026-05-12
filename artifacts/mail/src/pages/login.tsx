@@ -36,6 +36,7 @@ export default function Login() {
   const { data: user, isLoading: isCheckingAuth } = useGetMe({
     query: {
       retry: false,
+      queryKey: getGetMeQueryKey(),
     }
   });
 
@@ -67,7 +68,7 @@ export default function Login() {
           toast({
             variant: "destructive",
             title: "Login failed",
-            description: error.error || "Invalid username or password.",
+            description: (error as any)?.error || "Invalid username or password.",
           });
         },
       }

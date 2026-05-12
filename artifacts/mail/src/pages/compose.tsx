@@ -9,7 +9,9 @@ import {
   useSendEmail, 
   useGetEmail,
   getListEmailsQueryKey,
-  getGetEmailStatsQueryKey
+  getGetEmailStatsQueryKey,
+  getGetMeQueryKey,
+  getGetEmailQueryKey
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -36,7 +38,7 @@ export default function ComposePage() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false } });
+  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
   
   const searchParams = new URLSearchParams(window.location.search);
   const replyToId = searchParams.get("replyTo") ? parseInt(searchParams.get("replyTo") as string) : null;
@@ -44,7 +46,8 @@ export default function ComposePage() {
 
   const { data: sourceEmail } = useGetEmail(replyToId || draftId || 0, {
     query: {
-      enabled: !!replyToId || !!draftId
+      enabled: !!replyToId || !!draftId,
+      queryKey: getGetEmailQueryKey(replyToId || draftId || 0),
     }
   });
 
@@ -114,7 +117,7 @@ export default function ComposePage() {
           toast({
             variant: "destructive",
             title: "Failed to send",
-            description: error.error || "An error occurred while sending.",
+            description: (error as any)?.error || "An error occurred while sending.",
           });
         },
       }
@@ -151,7 +154,7 @@ export default function ComposePage() {
           toast({
             variant: "destructive",
             title: "Failed to save draft",
-            description: error.error || "An error occurred.",
+            description: (error as any)?.error || "An error occurred.",
           });
         },
       }
