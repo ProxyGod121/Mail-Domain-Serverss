@@ -1,0 +1,33 @@
+2026-05-12T23:54:48.16860924Z ==> Cloning from https://github.com/ProxyGod121/Mail-Domain-Serverss
+2026-05-12T23:54:48.710493124Z ==> Checking out commit e7d65f1b4f552bae2366ee7a426d1c92ac59acb1 in branch main
+2026-05-12T23:54:50.195081235Z ==> Requesting Node.js version 24
+2026-05-12T23:54:51.627220026Z ==> Using Node.js version 24.15.0 via environment variable NODE_VERSION
+2026-05-12T23:54:51.627238246Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2026-05-12T23:54:51.673344463Z ==> Running build command 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @workspace/api-server run build'...
+2026-05-12T23:54:52.694166406Z 
+2026-05-12T23:54:52.694192847Z added 1 package in 952ms
+2026-05-12T23:54:52.694206377Z 
+2026-05-12T23:54:52.694272599Z 1 package is looking for funding
+2026-05-12T23:54:52.694331071Z   run `npm fund` for details
+2026-05-12T23:54:53.288386957Z Scope: all 9 workspace projects
+2026-05-12T23:54:53.347218243Z Lockfile is up to date, resolution step is skipped
+2026-05-12T23:54:53.374030501Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-12T23:54:53.417916744Z Packages: +488
+2026-05-12T23:54:53.417948095Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-12T23:54:54.374220175Z Progress: resolved 488, reused 0, downloaded 123, added 95
+2026-05-12T23:54:55.374018518Z Progress: resolved 488, reused 0, downloaded 286, added 207
+2026-05-12T23:54:56.374393427Z Progress: resolved 488, reused 0, downloaded 298, added 211
+2026-05-12T23:54:57.377583229Z Progress: resolved 488, reused 0, downloaded 391, added 260
+2026-05-12T23:54:58.377169125Z Progress: resolved 488, reused 0, downloaded 488, added 298
+2026-05-12T23:54:58.649321937Z Progress: resolved 488, reused 0, downloaded 488, added 488, done
+2026-05-12T23:54:58.893058025Z 
+2026-05-12T23:54:58.893078646Z devDependencies:
+2026-05-12T23:54:58.893081936Z + prettier 3.8.1
+2026-05-12T23:54:58.893085396Z + typescript 5.9.3
+2026-05-12T23:54:58.893087837Z 
+2026-05-12T23:54:58.918089731Z . preinstall$ sh -c 'rm -f package-lock.json yarn.lock; if [ -z "$CI" ]; then case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac; fi'
+2026-05-12T23:54:58.948422971Z . preinstall: Use pnpm instead
+2026-05-12T23:54:58.950045018Z . preinstall: Failed
+2026-05-12T23:54:58.958977337Z [ELIFECYCLE] Command failed with exit code 1.
+2026-05-12T23:54:59.101330695Z ==> Build failed 😞
+2026-05-12T23:54:59.101351446Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
