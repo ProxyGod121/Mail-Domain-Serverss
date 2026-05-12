@@ -1,0 +1,33 @@
+2026-05-12T23:55:59.386510631Z ==> Cloning from https://github.com/ProxyGod121/Mail-Domain-Serverss
+2026-05-12T23:55:59.931365361Z ==> Checking out commit 91cb8482226543aabc7b363838d73d9b4e1c3805 in branch main
+2026-05-12T23:56:01.447366244Z ==> Requesting Node.js version 24
+2026-05-12T23:56:02.926614541Z ==> Using Node.js version 24.15.0 via environment variable NODE_VERSION
+2026-05-12T23:56:02.926631491Z ==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+2026-05-12T23:56:02.968974569Z ==> Running build command 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @workspace/api-server run build'...
+2026-05-12T23:56:03.983397946Z 
+2026-05-12T23:56:03.983423127Z added 1 package in 952ms
+2026-05-12T23:56:03.983427217Z 
+2026-05-12T23:56:03.98351006Z 1 package is looking for funding
+2026-05-12T23:56:03.983577752Z   run `npm fund` for details
+2026-05-12T23:56:04.564310372Z Scope: all 9 workspace projects
+2026-05-12T23:56:04.625082165Z Lockfile is up to date, resolution step is skipped
+2026-05-12T23:56:04.666353391Z Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-05-12T23:56:04.713331274Z Packages: +488
+2026-05-12T23:56:04.713352885Z ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-05-12T23:56:05.669272755Z Progress: resolved 488, reused 0, downloaded 124, added 95
+2026-05-12T23:56:06.669173902Z Progress: resolved 488, reused 0, downloaded 282, added 235
+2026-05-12T23:56:07.669816659Z Progress: resolved 488, reused 0, downloaded 297, added 239
+2026-05-12T23:56:08.670288692Z Progress: resolved 488, reused 0, downloaded 391, added 283
+2026-05-12T23:56:09.654993937Z Progress: resolved 488, reused 0, downloaded 488, added 488, done
+2026-05-12T23:56:09.937014246Z 
+2026-05-12T23:56:09.937041576Z devDependencies:
+2026-05-12T23:56:09.937048057Z + prettier 3.8.1
+2026-05-12T23:56:09.937054327Z + typescript 5.9.3
+2026-05-12T23:56:09.937060577Z 
+2026-05-12T23:56:09.964000778Z . preinstall$ sh -c 'rm -f package-lock.json yarn.lock'
+2026-05-12T23:56:09.99441902Z . preinstall: Done
+2026-05-12T23:56:10.04784609Z [ERR_PNPM_IGNORED_BUILDS] Ignored build scripts: esbuild@0.27.3
+2026-05-12T23:56:10.0478668Z 
+2026-05-12T23:56:10.04787237Z Run "pnpm approve-builds" to pick which dependencies should be allowed to run scripts.
+2026-05-12T23:56:10.1878633Z ==> Build failed 😞
+2026-05-12T23:56:10.187884571Z ==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
