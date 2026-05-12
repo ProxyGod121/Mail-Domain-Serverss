@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: MasonPowers Mail API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: emails
+    description: Email operations
+  - name: contacts
+    description: Contact operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +28,444 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Create a new email account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "409":
+          description: Email already taken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Log in to an existing account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Log out
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current logged-in user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/check-username:
+    get:
+      operationId: checkUsername
+      tags: [auth]
+      summary: Check if a username is available
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Availability result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UsernameAvailability"
+
+  /emails:
+    get:
+      operationId: listEmails
+      tags: [emails]
+      summary: List emails in a folder
+      parameters:
+        - name: folder
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [inbox, sent, drafts, trash, starred]
+            default: inbox
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+      responses:
+        "200":
+          description: List of emails
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailListResponse"
+
+    post:
+      operationId: sendEmail
+      tags: [emails]
+      summary: Send or save a draft email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailInput"
+      responses:
+        "201":
+          description: Email sent or saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /emails/{id}:
+    get:
+      operationId: getEmail
+      tags: [emails]
+      summary: Get a single email
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    patch:
+      operationId: updateEmail
+      tags: [emails]
+      summary: Update email (mark read, star, move to folder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmailUpdate"
+      responses:
+        "200":
+          description: Updated email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+
+    delete:
+      operationId: deleteEmail
+      tags: [emails]
+      summary: Delete an email permanently
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /emails/stats:
+    get:
+      operationId: getEmailStats
+      tags: [emails]
+      summary: Get mailbox stats (unread counts per folder)
+      responses:
+        "200":
+          description: Mailbox stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailboxStats"
+
+  /contacts:
+    get:
+      operationId: listContacts
+      tags: [contacts]
+      summary: List contacts (people who have emailed you)
+      responses:
+        "200":
+          description: List of contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contact"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    SuccessResponse:
+      type: object
+      required: [success]
+      properties:
+        success:
+          type: boolean
+
+    RegisterInput:
+      type: object
+      required: [username, password, displayName]
+      properties:
+        username:
+          type: string
+          minLength: 3
+          maxLength: 30
+        password:
+          type: string
+          minLength: 6
+        displayName:
+          type: string
+          minLength: 1
+
+    LoginInput:
+      type: object
+      required: [username, password]
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+
+    User:
+      type: object
+      required: [id, username, email, displayName, createdAt]
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        displayName:
+          type: string
+        createdAt:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+
+    UsernameAvailability:
+      type: object
+      required: [available]
+      properties:
+        available:
+          type: boolean
+
+    Email:
+      type: object
+      required: [id, fromEmail, fromName, toEmail, toName, subject, body, folder, isRead, isStarred, isDraft, createdAt]
+      properties:
+        id:
+          type: integer
+        fromEmail:
+          type: string
+        fromName:
+          type: string
+        toEmail:
+          type: string
+        toName:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        folder:
+          type: string
+        isRead:
+          type: boolean
+        isStarred:
+          type: boolean
+        isDraft:
+          type: boolean
+        createdAt:
+          type: string
+        replyToId:
+          type: ["integer", "null"]
+
+    EmailListResponse:
+      type: object
+      required: [emails, total, page, limit]
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/Email"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    EmailInput:
+      type: object
+      required: [toEmail, subject, body]
+      properties:
+        toEmail:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        isDraft:
+          type: boolean
+        replyToId:
+          type: ["integer", "null"]
+
+    EmailUpdate:
+      type: object
+      properties:
+        isRead:
+          type: boolean
+        isStarred:
+          type: boolean
+        folder:
+          type: string
+
+    MailboxStats:
+      type: object
+      required: [inbox, sent, drafts, trash, starred, total]
+      properties:
+        inbox:
+          type: integer
+        sent:
+          type: integer
+        drafts:
+          type: integer
+        trash:
+          type: integer
+        starred:
+          type: integer
+        total:
+          type: integer
+
+    Contact:
+      type: object
+      required: [email, displayName, emailCount, lastEmailAt]
+      properties:
+        email:
+          type: string
+        displayName:
+          type: string
+        emailCount:
+          type: integer
+        lastEmailAt:
+          type: string
