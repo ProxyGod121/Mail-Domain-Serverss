@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,6 +11,15 @@ import InboxPage from "@/pages/inbox";
 import ComposePage from "@/pages/compose";
 
 const queryClient = new QueryClient();
+
+function useServerPing() {
+  useEffect(() => {
+    const ping = () => fetch("/api/healthz").catch(() => {});
+    ping();
+    const id = setInterval(ping, 30_000);
+    return () => clearInterval(id);
+  }, []);
+}
 
 function Router() {
   return (
@@ -24,6 +34,7 @@ function Router() {
 }
 
 function App() {
+  useServerPing();
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
