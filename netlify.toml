@@ -12,7 +12,7 @@
 # e.g. https://masonpowers-api.onrender.com
 [[redirects]]
   from = "/api/*"
-  to = "YOUR_RENDER_API_URL/api/:splat"
+  to = "https://mail-domain-serverss.onrender.com/api/:splat"
   status = 200
   force = true
 
