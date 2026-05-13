@@ -3,7 +3,7 @@ services:
     name: masonpowers-api
     env: node
     plan: free
-    buildCommand: npm install -g pnpm && pnpm install --frozen-lockfile && pnpm --filter @workspace/api-server run build
+    buildCommand: npm install -g pnpm@9 && NODE_ENV= pnpm install --no-frozen-lockfile && pnpm --filter @workspace/mail run build && pnpm --filter @workspace/api-server run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz
     envVars:
@@ -11,5 +11,7 @@ services:
         value: production
       - key: NODE_VERSION
         value: "24"
+      - key: PORT
+        value: "10000"
       - key: POSTGRES_URL
         sync: false
