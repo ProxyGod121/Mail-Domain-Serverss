@@ -44,7 +44,8 @@ import {
 export default function InboxPage() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
-  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
+  const { data: user, isLoading, isFetching } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
+  const isCheckingAuth = isLoading || isFetching;
   
   const searchParams = new URLSearchParams(window.location.search);
   const folder = (searchParams.get("folder") as ListEmailsFolder) || "inbox";

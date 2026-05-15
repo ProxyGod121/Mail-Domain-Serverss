@@ -38,7 +38,8 @@ export default function ComposePage() {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { data: user, isLoading: isCheckingAuth } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
+  const { data: user, isLoading, isFetching } = useGetMe({ query: { retry: false, queryKey: getGetMeQueryKey() } });
+  const isCheckingAuth = isLoading || isFetching;
   
   const searchParams = new URLSearchParams(window.location.search);
   const replyToId = searchParams.get("replyTo") ? parseInt(searchParams.get("replyTo") as string) : null;
