@@ -7,25 +7,33 @@ const router: IRouter = Router();
 router.post("/webhooks/inbound", async (req, res): Promise<void> => {
   const payload = req.body;
 
-  // Resend inbound format
-  const from: string = payload.from ?? payload.data?.from ?? "";
-  const toField: string | string[] =
-    payload.to ?? payload.data?.to ?? payload.data?.headers?.to ?? "";
-  const subject: string = payload.subject ?? payload.data?.subject ?? "(no subject)";
-  const body: string =
-    payload.text ?? payload.data?.text ?? payload.html ?? payload.data?.html ?? "";
+  // Resend email.received webhook format:
+  // { type: "email.received", data: { from, to, subject, text, html, ... } }
+  const data = payload.data ?? payload;
 
-  const toAddresses: string[] = Array.isArray(toField)
-    ? toField
-    : toField.split(",").map((a: string) => a.trim());
+  const rawFrom: string = data.from ?? "";
+  const rawTo: string | string[] = data.to ?? [];
+  const subject: string = data.subject ?? "(no subject)";
+  const body: string = data.text ?? data.html ?? "";
 
-  const fromName = from.replace(/<[^>]+>/, "").trim() || from;
-  const fromEmail = (from.match(/<([^>]+)>/) ?? [, from])[1]?.toLowerCase() ?? from.toLowerCase();
+  // Parse "Display Name <email@example.com>" or plain "email@example.com"
+  const parseAddress = (raw: string) => {
+    const match = raw.match(/<([^>]+)>/);
+    const email = (match ? match[1] : raw).toLowerCase().trim();
+    const name = raw.replace(/<[^>]+>/, "").replace(/"/g, "").trim() || email;
+    return { email, name };
+  };
+
+  const { email: fromEmail, name: fromName } = parseAddress(rawFrom);
+
+  const toList: string[] = Array.isArray(rawTo)
+    ? rawTo
+    : rawTo.split(",").map((s: string) => s.trim());
 
   let delivered = 0;
 
-  for (const toRaw of toAddresses) {
-    const toEmail = (toRaw.match(/<([^>]+)>/) ?? [, toRaw])[1]?.toLowerCase() ?? toRaw.toLowerCase();
+  for (const toRaw of toList) {
+    const { email: toEmail } = parseAddress(toRaw);
 
     if (!toEmail.endsWith("@masonpowers.co")) continue;
 
@@ -34,7 +42,10 @@ router.post("/webhooks/inbound", async (req, res): Promise<void> => {
       .from(usersTable)
       .where(eq(usersTable.email, toEmail));
 
-    if (!recipient) continue;
+    if (!recipient) {
+      req.log.warn({ toEmail }, "Inbound email: no matching user found");
+      continue;
+    }
 
     await db.insert(emailsTable).values({
       fromUserId: null,
@@ -54,7 +65,7 @@ router.post("/webhooks/inbound", async (req, res): Promise<void> => {
     delivered++;
   }
 
-  req.log.info({ fromEmail, toAddresses, delivered }, "Inbound email processed");
+  req.log.info({ fromEmail, toList, delivered }, "Inbound email processed");
   res.json({ ok: true, delivered });
 });
 
