@@ -228,12 +228,21 @@ router.post("/emails", async (req, res): Promise<void> => {
     });
   } else if (resend) {
     // Recipient is external — deliver via Resend
-    await resend.emails.send({
-      from: `${user.displayName} <${user.email}>`,
-      to: toEmail.toLowerCase(),
-      subject,
-      text: body,
-    });
+    try {
+      const { data, error } = await resend.emails.send({
+        from: `${user.displayName} <${user.email}>`,
+        to: toEmail.toLowerCase(),
+        subject,
+        text: body,
+      });
+      if (error) {
+        req.log.error({ error }, "Resend delivery failed");
+      } else {
+        req.log.info({ resendId: data?.id }, "Email delivered via Resend");
+      }
+    } catch (err) {
+      req.log.error({ err }, "Resend threw an exception");
+    }
   }
 
   res.status(201).json({
