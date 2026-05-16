@@ -33,3 +33,8 @@ externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+RESEND_WEBHOOK_SECRET = "whsec_v3hxZaBaaZ6LkFJm+edN1IJcaGR6LWSr"
