@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { eq, and, or, ilike, desc, count, sql } from "drizzle-orm";
+import { eq, and, or, desc, count, sql } from "drizzle-orm";
 import { db, emailsTable, usersTable } from "@workspace/db";
 import {
   ListEmailsQueryParams,
@@ -10,6 +10,9 @@ import {
   DeleteEmailParams,
 } from "@workspace/api-zod";
 import { requireAuth } from "../lib/auth";
+import { Resend } from "resend";
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const router: IRouter = Router();
 
@@ -222,6 +225,14 @@ router.post("/emails", async (req, res): Promise<void> => {
       isDraft: false,
       isRead: false,
       replyToId: replyToId ?? null,
+    });
+  } else if (resend) {
+    // Recipient is external — deliver via Resend
+    await resend.emails.send({
+      from: `${user.displayName} <${user.email}>`,
+      to: toEmail.toLowerCase(),
+      subject,
+      text: body,
     });
   }
 
