@@ -193,6 +193,19 @@ export default function InboxPage() {
   const selectedEmail =
     listResponse?.emails.find((e) => e.id === selectedEmailId) ?? null;
 
+  const handleEmptyTrash = () => {
+    const trashEmails = listResponse?.emails ?? [];
+    Promise.all(
+      trashEmails.map((email) =>
+        deleteEmail.mutateAsync({ id: email.id })
+      )
+    ).then(() => {
+      setSelectedEmailId(null);
+      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getGetEmailStatsQueryKey() });
+    });
+  };
+
   const folderLabel: Record<string, string> = {
     inbox: "Inbox",
     starred: "Starred",
@@ -226,6 +239,22 @@ export default function InboxPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+            {folder === "trash" && (listResponse?.emails.length ?? 0) > 0 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                className="shrink-0"
+                onClick={handleEmptyTrash}
+                disabled={deleteEmail.isPending}
+              >
+                {deleteEmail.isPending ? (
+                  <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Trash2 className="mr-2 h-3.5 w-3.5" />
+                )}
+                Empty Trash
+              </Button>
+            )}
           </div>
 
           <ScrollArea className="flex-1">
