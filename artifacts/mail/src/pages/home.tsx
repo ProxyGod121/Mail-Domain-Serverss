@@ -80,8 +80,8 @@ export default function Home() {
     register.mutate(
       { data: values },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+        onSuccess: (data) => {
+          queryClient.setQueryData(getGetMeQueryKey(), data.user);
           toast({
             title: "Account created",
             description: "Welcome to MasonPowers Mail.",

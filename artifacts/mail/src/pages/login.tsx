@@ -60,8 +60,8 @@ export default function Login() {
     login.mutate(
       { data: values },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+        onSuccess: (data) => {
+          queryClient.setQueryData(getGetMeQueryKey(), data.user);
           setLocation("/inbox");
         },
         onError: (error) => {
