@@ -3,7 +3,7 @@ services:
     name: masonpowers-api
     env: node
     plan: free
-    buildCommand: npm install -g pnpm@9 && NODE_ENV= pnpm install --no-frozen-lockfile && pnpm --filter @workspace/api-server run build
+    buildCommand: npm install -g pnpm@9 && NODE_ENV= pnpm install --no-frozen-lockfile && pnpm --filter @workspace/mail run build && pnpm --filter @workspace/api-server run build
     startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
     healthCheckPath: /api/healthz
     envVars:
@@ -13,16 +13,7 @@ services:
         value: "24"
       - key: POSTGRES_URL
         sync: false
-
-  - type: web
-    name: masonpowers-frontend
-    env: static
-    buildCommand: npm install -g pnpm@9 && NODE_ENV= pnpm install --no-frozen-lockfile && pnpm --filter @workspace/mail run build
-    staticPublishPath: artifacts/mail/dist/public
-    envVars:
-      - key: VITE_API_URL
-        value: https://mail-domain-serverss.onrender.com
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+      - key: RESEND_API_KEY
+        sync: false
+      - key: RESEND_WEBHOOK_SECRET
+        sync: false
