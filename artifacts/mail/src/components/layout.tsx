@@ -37,9 +37,13 @@ export function AppLayout({ children }: LayoutProps) {
   const handleLogout = () => {
     logout.mutate(undefined, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getGetMeQueryKey() });
+        queryClient.clear();
         setLocation("/login");
-      }
+      },
+      onError: () => {
+        queryClient.clear();
+        setLocation("/login");
+      },
     });
   };
 
