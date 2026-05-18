@@ -37,3 +37,4 @@ channel = "stable-25_05"
 [userenv]
 
 [userenv.shared]
+RESEND_WEBHOOK_SECRET = "whsec_xJ3iMZsyWItpJ7VooNt7FrayGbOuryDJ"
