@@ -15,7 +15,9 @@ function verifySignature(req: Request): boolean {
 
   if (!signature || !msgId || !timestamp) return false;
 
-  const body = JSON.stringify(req.body);
+  // Use the raw body bytes for HMAC — re-stringifying parsed JSON can produce
+  // different output (whitespace, key order) which breaks the signature check.
+  const body = req.rawBody ? req.rawBody.toString("utf8") : JSON.stringify(req.body);
   const signedContent = `${msgId}.${timestamp}.${body}`;
   const secretBytes = Buffer.from(secret.replace(/^whsec_/, ""), "base64");
   const computed = createHmac("sha256", secretBytes)
