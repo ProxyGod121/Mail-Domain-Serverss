@@ -124,7 +124,11 @@ router.post("/auth/logout", async (req, res): Promise<void> => {
   if (cookieToken) {
     await db.delete(sessionsTable).where(eq(sessionsTable.token, cookieToken));
   }
-  res.clearCookie("session_token");
+  res.clearCookie("session_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+  });
   res.json({ success: true });
 });
 

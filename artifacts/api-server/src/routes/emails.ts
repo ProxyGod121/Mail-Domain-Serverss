@@ -124,8 +124,10 @@ router.get("/emails", async (req, res): Promise<void> => {
 
   const result = emails.map((e) => ({
     id: e.id,
+    fromUserId: e.fromUserId,
     fromEmail: e.fromEmail,
     fromName: e.fromName,
+    toUserId: e.toUserId,
     toEmail: e.toEmail,
     toName: e.toName,
     subject: e.subject,
