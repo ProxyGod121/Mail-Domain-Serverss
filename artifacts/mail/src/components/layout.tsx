@@ -7,7 +7,8 @@ import {
   Trash2, 
   Star,
   LogOut,
-  PenSquare
+  PenSquare,
+  Settings
 } from "lucide-react";
 import { useGetMe, useGetEmailStats, useLogout, getGetMeQueryKey, getGetEmailStatsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -152,6 +153,11 @@ export function AppLayout({ children }: LayoutProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => setLocation("/account")}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Account Settings</span>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />

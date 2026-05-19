@@ -34,6 +34,17 @@ export interface LoginInput {
   password: string;
 }
 
+export interface UpdateProfileInput {
+  /** @minLength 1 */
+  displayName: string;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  /** @minLength 6 */
+  newPassword: string;
+}
+
 export interface User {
   id: number;
   username: string;

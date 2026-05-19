@@ -7,6 +7,7 @@
  */
 
 export * from "./authResponse";
+export * from "./changePasswordInput";
 export * from "./checkUsernameParams";
 export * from "./contact";
 export * from "./email";
@@ -21,5 +22,6 @@ export * from "./loginInput";
 export * from "./mailboxStats";
 export * from "./registerInput";
 export * from "./successResponse";
+export * from "./updateProfileInput";
 export * from "./user";
 export * from "./usernameAvailability";

@@ -68,6 +68,36 @@ export const GetMeResponse = zod.object({
 });
 
 /**
+ * @summary Update display name
+ */
+
+export const UpdateProfileBody = zod.object({
+  displayName: zod.string().min(1),
+});
+
+export const UpdateProfileResponse = zod.object({
+  id: zod.number(),
+  username: zod.string(),
+  email: zod.string(),
+  displayName: zod.string(),
+  createdAt: zod.string(),
+});
+
+/**
+ * @summary Change account password
+ */
+export const changePasswordBodyNewPasswordMin = 6;
+
+export const ChangePasswordBody = zod.object({
+  currentPassword: zod.string(),
+  newPassword: zod.string().min(changePasswordBodyNewPasswordMin),
+});
+
+export const ChangePasswordResponse = zod.object({
+  success: zod.boolean(),
+});
+
+/**
  * @summary Check if a username is available
  */
 export const CheckUsernameQueryParams = zod.object({

@@ -147,6 +147,63 @@ router.get("/auth/me", async (req, res): Promise<void> => {
   });
 });
 
+router.patch("/auth/profile", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
+
+  const { displayName } = req.body ?? {};
+  if (!displayName || typeof displayName !== "string" || displayName.trim().length === 0) {
+    res.status(400).json({ error: "Display name is required" });
+    return;
+  }
+
+  const [updated] = await db
+    .update(usersTable)
+    .set({ displayName: displayName.trim() })
+    .where(eq(usersTable.id, user.id))
+    .returning();
+
+  res.json({
+    id: updated.id,
+    username: updated.username,
+    email: updated.email,
+    displayName: updated.displayName,
+    createdAt: updated.createdAt.toISOString(),
+  });
+});
+
+router.post("/auth/change-password", async (req, res): Promise<void> => {
+  const user = await getUserFromRequest(req);
+  if (!user) {
+    res.status(401).json({ error: "Not authenticated" });
+    return;
+  }
+
+  const { currentPassword, newPassword } = req.body ?? {};
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ error: "Current and new password are required" });
+    return;
+  }
+  if (typeof newPassword !== "string" || newPassword.length < 6) {
+    res.status(400).json({ error: "New password must be at least 6 characters" });
+    return;
+  }
+
+  const valid = await verifyPassword(currentPassword, user.passwordHash);
+  if (!valid) {
+    res.status(401).json({ error: "Current password is incorrect" });
+    return;
+  }
+
+  const newHash = await hashPassword(newPassword);
+  await db.update(usersTable).set({ passwordHash: newHash }).where(eq(usersTable.id, user.id));
+
+  res.json({ success: true });
+});
+
 router.get("/auth/check-username", async (req, res): Promise<void> => {
   const parsed = CheckUsernameQueryParams.safeParse(req.query);
   if (!parsed.success) {
